@@ -1,42 +1,35 @@
-from termmodrinth.config import config
-from termmodrinth.logger import logger
+from concurrent.futures import ThreadPoolExecutor, wait
+
+from termmodrinth.singleton import Singleton
 from termmodrinth.cleaner import Cleaner
-from concurrent.futures import ThreadPoolExecutor
-import os
+from termmodrinth.config import Config
+from termmodrinth.logger import Logger
+from termmodrinth.modrinth import project_types
 
-class Worker(object):
+class Worker(Singleton):
   def __init__(self):
-    self.cleaner = Cleaner()
     self.tp_executor = ThreadPoolExecutor(max_workers=8)
-
-    # print(self.tp_executor)
+    self.futures = []
 
   def updateProject(self, project_type, slug):
-    if self.cleaner.append(project_type, slug):
-      logger.log('inf', project_type, slug, 'Starting update')
+    if Cleaner().append(project_type, slug):
+      Logger().log('inf', project_type, slug, 'Starting update')
       project_types[project_type]['class'](slug).update()
     else:
-      logger.log('inf', project_type, slug, "Already updated", "cyan")
+      Logger().log('inf', project_type, slug, "Already updated", "light_blue")
 
   def update(self):
-    for project_type in ['mod', 'resourcepack', 'shader']:
-      for slug in config.projects(project_type):
+    for project_type in project_types.keys():
+      for slug in Config().projects(project_type):
         self.appendThread(project_type, slug)
 
   def appendThread(self, project_type, slug):
-    self.tp_executor.submit(self.updateProject, project_type, slug)
+    self.futures.append(self.tp_executor.submit(self.updateProject, project_type, slug))
 
   def run(self):
     self.update()
-    self.tp_executor.shutdown(wait=True)
-    self.cleaner.cleanup()
-    self.cleaner.printStats()
-
-
-worker = Worker()
-
-from termmodrinth.modrinth import project_types
-# print(worker)
-# from termmodrinth.modrinth.mod import ModrinthMod
-# from termmodrinth.modrinth.resourcepack import ModrinthResourcePack
-# from termmodrinth.modrinth.shader import ModrinthShader
+    # print (self.futures)
+    self.tp_executor.shutdown(wait=True, cancel_futures=False)
+    # wait(self.futures)
+    Cleaner().cleanup()
+    Cleaner().printStats()

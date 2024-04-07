@@ -1,9 +1,9 @@
-from termcolor import colored, cprint
+from termmodrinth.singleton import Singleton
+from termcolor import colored
 import datetime
 
-class Logger(object):
-  def __init__(self):
-    self.levels = {
+class Logger(Singleton):
+  levels = {
       'inf': 'green',
       'wrn': 'yellow',
       'err': 'red'
@@ -21,5 +21,3 @@ class Logger(object):
                                     colored(level, self.levels[level]),
                                     colored('{}:{}'.format(project_type, slug), "magenta"),
                                     colored(msg, msg_color)))
-
-logger = Logger()

@@ -1,40 +1,39 @@
-from termmodrinth.config import config
-from termmodrinth.logger import logger
 import os
+import threading
 
-class Cleaner(object):
-  def __init__(self):
-    self.projects = {
+from termmodrinth.singleton import Singleton
+from termmodrinth.config import Config
+from termmodrinth.logger import Logger
+from termmodrinth.modrinth import project_types
+
+class Cleaner(Singleton):
+  projects = {
       'mod': [],
       'resourcepack': [],
       'shader': []
     }
-    self.extentions = {
-      'mod': '.jar',
-      'resourcepack': '.zip',
-      'shader': '.zip'
-    }
 
   def append(self, project_type, slug):
-    if slug not in self.projects[project_type]:
-      self.projects[project_type].append(slug)
-      return True
-    return False
+    with threading.Lock():
+      if slug not in self.projects[project_type]:
+        self.projects[project_type].append(slug)
+        return True
+      return False
+    raise Exception("Wrong lock")
 
   def cleanup(self):
-    for project_type in ['mod', 'resourcepack', 'shader']:
-      logger.delimiter("|", "Cleaning up {}s".format(project_type))
-      path = config.active_path(project_type)
+    for project_type in project_types.keys():
+      Logger().delimiter("|", "Cleaning up {}s".format(project_type))
+      path = Config().active_path(project_type)
       for f in os.listdir(path):
-        if f.endswith(self.extentions[project_type]):
+        if f.endswith(project_types[project_type]['extention']):
           fn, ext = os.path.splitext(f)
           if fn not in self.projects[project_type]:
             filename = "{}/{}".format(path, f)
-            logger.msg("Removing {}".format(filename), "red")
+            Logger().msg("Removing {}".format(filename), "red")
             os.remove(filename)
 
   def printStats(self):
-    logger.delimiter("=", "Stats")
-    logger.msg("Mods. Requested: {}; Downloaded: {}".format(len(config.mods()), len(self.projects['mod'])), "light_green")
-    logger.msg("Resourcepacks. Requested: {}; Downloaded: {}".format(len(config.resourcepacks()), len(self.projects['resourcepack'])), "light_green")
-    logger.msg("Shaders. Requested: {}; Downloaded: {}".format(len(config.shaders()), len(self.projects['shader'])), "light_green")
+    Logger().delimiter("=", "Stats")
+    for project_type in project_types.keys():
+      Logger().msg("{}s. Requested: {}; Downloaded: {}".format(project_type.capitalize(), len(Config().projects(project_type)), len(self.projects[project_type])), "light_green")

@@ -1,15 +1,14 @@
 import json
 import os
 
-class Config(object):
+from termmodrinth.singleton import Singleton
+
+class Config(Singleton):
   def __init__(self):
     with open('termmodrinth.json', 'r') as f:
       self.conf_data = json.load(f)
 
   def projects(self, project_type): return list(filter(lambda x: not x.startswith("#"), self.conf_data[project_type+'s']))
-  def mods(self): return self.projects('mod')
-  def resourcepacks(self): return self.projects('resourcepack')
-  def shaders(self): return self.projects('shader')
 
   def modrinthLoader(self): return self.conf_data["modrinth"]["loader"]
   def modrinthMCVersions(self): return self.conf_data["modrinth"]["minecraft_versions"]
@@ -23,5 +22,3 @@ class Config(object):
     path = "{}/{}s/{}".format(self.conf_data["storage"], project_type, storage_type)
     os.makedirs(path, exist_ok=True)
     return path
-
-config = Config()

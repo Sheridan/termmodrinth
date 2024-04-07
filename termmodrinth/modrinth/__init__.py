@@ -4,12 +4,15 @@ from termmodrinth.modrinth.shader import ModrinthShader
 
 project_types = {
   'mod': {
-    'class': ModrinthMod
+    'class': ModrinthMod,
+    'extention': '.jar'
   },
   'resourcepack': {
-    'class': ModrinthResourcePack
+    'class': ModrinthResourcePack,
+    'extention': '.zip'
   },
   'shader': {
-    'class': ModrinthShader
+    'class': ModrinthShader,
+    'extention': '.zip'
   }
 }

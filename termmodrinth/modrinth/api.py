@@ -1,9 +1,12 @@
 import json
 import urllib.request
 import urllib.parse
-from termmodrinth.config import config
 
-class ModrinthAPI(object):
+from termmodrinth.singleton import Singleton
+from termmodrinth.config import Config
+
+
+class ModrinthAPI(Singleton):
   def __init__(self):
     self.apiURL = "https://api.modrinth.com/v2/"
     # self.apiURL = "https://staging-api.modrinth.com/v2/"
@@ -29,13 +32,11 @@ class ModrinthAPI(object):
   def loadProjectVersion(self, slug, project_type):
     loader = ""
     if project_type == "mod":
-      loader = "&loaders=[{}]".format(self.quote(config.modrinthLoader()))
-    for mc_version in config.modrinthMCVersions():
+      loader = "&loaders=[{}]".format(self.quote(Config().modrinthLoader()))
+    for mc_version in Config().modrinthMCVersions():
       api_path = 'project/{}/version?game_versions=[{}]{}'.format(slug, self.quote(mc_version), loader)
       pdata = self.callAPI(api_path)
       if len(pdata):
         # if len(pdata[0]["dependencies"]):
         # self.dump_json(pdata[0]["changelog"])
         return pdata[0]
-
-api = ModrinthAPI()
