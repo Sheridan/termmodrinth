@@ -9,57 +9,25 @@ class Worker(object):
     self.cleaner = Cleaner()
     self.tp_executor = ThreadPoolExecutor(max_workers=8)
 
-  def updateMod(self, slug, cleaner):
-    if cleaner.append('mod', slug):
-      # logger.log('inf', 'mod', slug, 'Starting update')
-      ModrinthMod(slug).update()
+    # print(self.tp_executor)
+
+  def updateProject(self, project_type, slug):
+    if self.cleaner.append(project_type, slug):
+      logger.log('inf', project_type, slug, 'Starting update')
+      project_types[project_type]['class'](slug).update()
     else:
-      logger.log('inf','mod', slug, "Already updated", "cyan")
+      logger.log('inf', project_type, slug, "Already updated", "cyan")
 
-  def updateResourcePack(self, slug, cleaner):
-    if cleaner.append('resourcepack', slug):
-      # logger.log('inf', 'resourcepack', slug, 'Starting update')
-      ModrinthResourcePack(slug).update()
-    else:
-      logger.log('inf', 'resourcepack', slug, "Already updated", "cyan")
+  def update(self):
+    for project_type in ['mod', 'resourcepack', 'shader']:
+      for slug in config.projects(project_type):
+        self.appendThread(project_type, slug)
 
-  def updateShader(self, slug, cleaner):
-    if cleaner.append('shader', slug):
-      # logger.log('inf', 'shader', slug, 'Starting update')
-      ModrinthShader(slug).update()
-    else:
-      logger.log('inf', 'shader', slug, "Already updated", "cyan")
-
-  def updateProject(self, slug, project_type):
-    if project_type == "mod":
-      self.tp_executor.submit(self.updateMod, slug, self.cleaner)
-    if project_type == "resourcepack":
-      self.tp_executor.submit(self.updateResourcePack, slug, self.cleaner)
-    if project_type == "shader":
-      self.tp_executor.submit(self.updateShader, slug, self.cleaner)
-
-  def updateMods(self):
-    for slug in config.mods():
-      self.tp_executor.submit(self.updateMod, slug, self.cleaner)
-
-  def updateResourcePacks(self):
-    for slug in config.resourcepacks():
-      self.tp_executor.submit(self.updateResourcePack, slug, self.cleaner)
-
-  def updateShaders(self):
-    for slug in config.shaders():
-      self.tp_executor.submit(self.updateShader, slug, self.cleaner)
-
-
+  def appendThread(self, project_type, slug):
+    self.tp_executor.submit(self.updateProject, project_type, slug)
 
   def run(self):
-    # with ThreadPoolExecutor() as executor:
-    #   executor.submit(self.updateMods)
-    #   executor.submit(self.updateResourcePacks)
-    #   executor.submit(self.updateShaders)
-    self.updateMods()
-    self.updateResourcePacks()
-    self.updateShaders()
+    self.update()
     self.tp_executor.shutdown(wait=True)
     self.cleaner.cleanup()
     self.cleaner.printStats()
@@ -67,6 +35,8 @@ class Worker(object):
 
 worker = Worker()
 
-from termmodrinth.modrinth.mod import ModrinthMod
-from termmodrinth.modrinth.resourcepack import ModrinthResourcePack
-from termmodrinth.modrinth.shader import ModrinthShader
+from termmodrinth.modrinth import project_types
+# print(worker)
+# from termmodrinth.modrinth.mod import ModrinthMod
+# from termmodrinth.modrinth.resourcepack import ModrinthResourcePack
+# from termmodrinth.modrinth.shader import ModrinthShader

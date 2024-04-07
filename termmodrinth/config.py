@@ -6,10 +6,10 @@ class Config(object):
     with open('termmodrinth.json', 'r') as f:
       self.conf_data = json.load(f)
 
-  def projects(self, project_type): return list(filter(lambda x: not x.startswith("#"), self.conf_data[project_type]))
-  def mods(self): return self.projects('mods')
-  def resourcepacks(self): return self.projects('resourcepacks')
-  def shaders(self): return self.projects('shaders')
+  def projects(self, project_type): return list(filter(lambda x: not x.startswith("#"), self.conf_data[project_type+'s']))
+  def mods(self): return self.projects('mod')
+  def resourcepacks(self): return self.projects('resourcepack')
+  def shaders(self): return self.projects('shader')
 
   def modrinthLoader(self): return self.conf_data["modrinth"]["loader"]
   def modrinthMCVersions(self): return self.conf_data["modrinth"]["minecraft_versions"]

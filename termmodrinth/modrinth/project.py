@@ -40,8 +40,11 @@ class ModrinthProject(object):
     for dependency in self.data["dependencies"]:
       if dependency["dependency_type"] == "required":
         slug, project_type = api.loadSlug(dependency["project_id"])
-        worker.updateProject(slug, project_type)
-        # logger.msg("{}:{}".format(project_type, slug), "red")
+        logger.log('inf', self.project_type, self.slug, "Dependency: {}:{}".format(project_type, slug), "blue")
+        # print(worker)
+        # global worker
+        # worker.appendThread(worker.updateProject, (slug, project_type))
+        worker.updateProject(project_type, slug)
 
   def update(self):
     self.download()
