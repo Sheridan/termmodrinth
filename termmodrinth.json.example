@@ -1,0 +1,57 @@
+{
+  "mods":
+  [
+    "accurate-block-placement-reborn",
+    "animatica",
+    "bookshelf-lib",
+    "brb",
+    "build-guide",
+    "c2me-fabric",
+    "cit-resewn",
+    "inventorio",
+    "inventory-profiles-next",
+    "iris",
+    "jade",
+    "tps-hud",
+    "travelersbackpack",
+    "#vulkanmod",
+    "world-play-time"
+  ],
+  "resourcepacks":
+  [
+    "3d-crops",
+    "3d-items-mintynoura",
+    "bare-bones-x-fresh-animations",
+    "better-enchanted-book",
+    "xalis-potion",
+    "xalis-potions-addon",
+    "xk-redstone-display",
+    "zebccicons"
+  ],
+  "shaders":
+  [
+    "bsl-shaders",
+    "noble",
+    "shrimple",
+    "soft-voxels-lite"
+  ],
+  "storage": "/tmp/termmodrinth",
+  "modrinth":
+  {
+    "minecraft_versions":
+    [
+      "1.20.4",
+      "1.20.3",
+      "1.20.2",
+      "1.20.1",
+      "1.20",
+      "1.19.2"
+    ],
+    "loader": "fabric",
+    "user":
+    {
+      "login": "",
+      "password": ""
+    }
+  }
+}
