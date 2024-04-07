@@ -9,10 +9,9 @@ from termmodrinth.modrinth import project_types
 class Worker(Singleton):
   def __init__(self):
     self.tp_executor = ThreadPoolExecutor(max_workers=8)
-    self.futures = []
 
   def updateProject(self, project_type, slug):
-    if Cleaner().append(project_type, slug):
+    if Cleaner().appenSlug(project_type, slug):
       Logger().log('inf', project_type, slug, 'Starting update')
       project_types[project_type]['class'](slug).update()
     else:
@@ -24,12 +23,10 @@ class Worker(Singleton):
         self.appendThread(project_type, slug)
 
   def appendThread(self, project_type, slug):
-    self.futures.append(self.tp_executor.submit(self.updateProject, project_type, slug))
+    self.tp_executor.submit(self.updateProject, project_type, slug)
 
   def run(self):
     self.update()
-    # print (self.futures)
     self.tp_executor.shutdown(wait=True, cancel_futures=False)
-    # wait(self.futures)
     Cleaner().cleanup()
     Cleaner().printStats()

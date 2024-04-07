@@ -13,10 +13,24 @@ class Cleaner(Singleton):
       'shader': []
     }
 
-  def append(self, project_type, slug):
+  files = {
+      'mod': [],
+      'resourcepack': [],
+      'shader': []
+    }
+
+  def appenSlug(self, project_type, slug):
     with threading.Lock():
       if slug not in self.projects[project_type]:
         self.projects[project_type].append(slug)
+        return True
+      return False
+    raise Exception("Wrong lock")
+
+  def appenFile(self, project_type, filename):
+    with threading.Lock():
+      if filename not in self.files[project_type]:
+        self.files[project_type].append(filename)
         return True
       return False
     raise Exception("Wrong lock")
@@ -27,8 +41,7 @@ class Cleaner(Singleton):
       path = Config().active_path(project_type)
       for f in os.listdir(path):
         if f.endswith(project_types[project_type]['extention']):
-          fn, ext = os.path.splitext(f)
-          if fn not in self.projects[project_type]:
+          if f not in self.files[project_type]:
             filename = "{}/{}".format(path, f)
             Logger().msg("Removing {}".format(filename), "red")
             os.remove(filename)

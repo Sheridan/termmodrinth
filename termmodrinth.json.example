@@ -8,12 +8,12 @@
     "build-guide",
     "c2me-fabric",
     "cit-resewn",
-    "inventorio",
-    "inventory-profiles-next",
-    "iris",
+    "#inventorio",
+    "#inventory-profiles-next",
+    "#iris",
     "jade",
     "tps-hud",
-    "travelersbackpack",
+    "#travelersbackpack",
     "#vulkanmod",
     "world-play-time"
   ],
@@ -21,17 +21,17 @@
   [
     "3d-crops",
     "3d-items-mintynoura",
-    "bare-bones-x-fresh-animations",
+    "#bare-bones-x-fresh-animations",
     "better-enchanted-book",
-    "xalis-potion",
-    "xalis-potions-addon",
+    "#xalis-potion",
+    "#xalis-potions-addon",
     "xk-redstone-display",
     "zebccicons"
   ],
   "shaders":
   [
     "bsl-shaders",
-    "noble",
+    "#noble",
     "shrimple",
     "soft-voxels-lite"
   ],
@@ -48,6 +48,17 @@
       "1.19.2"
     ],
     "loader": "fabric",
+    "request_dependencies":
+    [
+      "required",
+      "#optional"
+    ],
+    "primaries_only":
+    {
+      "mods": true,
+      "resourcepacks": true,
+      "shaders": true
+    },
     "user":
     {
       "login": "",

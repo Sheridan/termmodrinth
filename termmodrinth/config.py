@@ -8,7 +8,9 @@ class Config(Singleton):
     with open('termmodrinth.json', 'r') as f:
       self.conf_data = json.load(f)
 
-  def projects(self, project_type): return list(filter(lambda x: not x.startswith("#"), self.conf_data[project_type+'s']))
+  def filterListComment(self, data): return list(filter(lambda x: not x.startswith("#"), data))
+
+  def projects(self, project_type): return self.filterListComment(self.conf_data[project_type+'s'])
 
   def modrinthLoader(self): return self.conf_data["modrinth"]["loader"]
   def modrinthMCVersions(self): return self.conf_data["modrinth"]["minecraft_versions"]
@@ -22,3 +24,8 @@ class Config(Singleton):
     path = "{}/{}s/{}".format(self.conf_data["storage"], project_type, storage_type)
     os.makedirs(path, exist_ok=True)
     return path
+
+  def primariesOnly(self, project_type): return self.conf_data["modrinth"]["primaries_only"][project_type+'s']
+  def tryNotDownloadSources(self, project_type): return self.conf_data["modrinth"]["try_not_download_sources"][project_type+'s']
+
+  def requestDependencies(self): return self.filterListComment(self.conf_data["modrinth"]["request_dependencies"])

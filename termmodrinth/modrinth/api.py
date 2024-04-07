@@ -37,6 +37,6 @@ class ModrinthAPI(Singleton):
       api_path = 'project/{}/version?game_versions=[{}]{}'.format(slug, self.quote(mc_version), loader)
       pdata = self.callAPI(api_path)
       if len(pdata):
-        # if len(pdata[0]["dependencies"]):
-        # self.dump_json(pdata[0]["changelog"])
+        # self.dump_json(pdata[0])
         return pdata[0]
+    raise Exception("Can not request api")
