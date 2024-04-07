@@ -32,11 +32,11 @@ class Worker(object):
 
   def updateProject(self, slug, project_type):
     if project_type == "mod":
-      self.tp_executor.submit(self.updateMod, slug)
+      self.tp_executor.submit(self.updateMod, slug, self.cleaner)
     if project_type == "resourcepack":
-      self.tp_executor.submit(self.updateResourcePack, slug)
+      self.tp_executor.submit(self.updateResourcePack, slug, self.cleaner)
     if project_type == "shader":
-      self.tp_executor.submit(self.updateShader, slug)
+      self.tp_executor.submit(self.updateShader, slug, self.cleaner)
 
   def updateMods(self):
     for slug in config.mods():
