@@ -56,6 +56,12 @@
     "primaries_only":
     {
       "mods": true,
+      "resourcepacks": false,
+      "shaders": true
+    },
+    "try_not_download_sources":
+    {
+      "mods": true,
       "resourcepacks": true,
       "shaders": true
     },

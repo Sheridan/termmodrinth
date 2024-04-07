@@ -49,4 +49,4 @@ class Cleaner(Singleton):
   def printStats(self):
     Logger().delimiter("=", "Stats")
     for project_type in project_types.keys():
-      Logger().msg("{}s. Requested: {}; Downloaded: {}".format(project_type.capitalize(), len(Config().projects(project_type)), len(self.projects[project_type])), "light_green")
+      Logger().msg("{}s. Requested: {}; Processed: {}; Files: {}".format(project_type.capitalize(), len(Config().projects(project_type)), len(self.projects[project_type]), len(self.files[project_type])), "light_green")

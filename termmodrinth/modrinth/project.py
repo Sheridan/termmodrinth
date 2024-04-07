@@ -35,7 +35,6 @@ class ModrinthProject(object):
     return True
 
   def isSources(self, filename):
-    print(filename)
     return "source" in filename or "src" in filename
 
   def download(self):
