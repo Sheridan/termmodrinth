@@ -14,6 +14,8 @@ class ModrinthAPI(Singleton):
     self.apiURL = "https://api.modrinth.com/v2/"
     self.cache = {}
     self.resetQPS()
+    self.totlal_requests = 0
+    self.init_time = time.time()
 
   def dump_json(self, data):
     print(json.dumps(data, indent=2))
@@ -39,13 +41,13 @@ class ModrinthAPI(Singleton):
     try:
       self.checkQPS()
       with urllib.request.urlopen(url) as response:
-        self.requests+=1
+        self.requests += 1
+        self.totlal_requests += 1
         jdata = json.load(response)
         return jdata
     except Exception as e:
       Logger().log('err', "Failure call api ({}): {}".format(url, e), "red")
       os._exit(1)
-    # raise Exception("Can not request api")
 
   def loadProject(self, project_id):
     if project_id not in self.cache.keys():
@@ -63,6 +65,8 @@ class ModrinthAPI(Singleton):
       for mc_version in Config().modrinthMCVersions(project_type):
         api_path = 'project/{}/version?game_versions=[{}]&loaders=[{}]'.format(slug, self.quote(mc_version), self.quote(Config().modrinthLoader(project_type)))
         pdata = self.callAPI(api_path)
+        # if len(pdata) > 1:
+        #   self.dump_json(pdata)
         if len(pdata):
           # self.dump_json(pdata[0])
           self.cache[key] = pdata[0]
@@ -73,3 +77,7 @@ class ModrinthAPI(Singleton):
       Logger().projectLog('err', project_type, slug, "None version available", "red")
       os._exit(1)
     return self.cache[key]
+
+  def stats(self):
+    time_spent = time.time() - self.init_time
+    return (self.totlal_requests, time.strftime("%H:%M:%S", time.gmtime(time_spent)), round(self.totlal_requests/time_spent, 2))
