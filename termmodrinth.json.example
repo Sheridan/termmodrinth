@@ -36,6 +36,7 @@
     "soft-voxels-lite"
   ],
   "storage": "/tmp/termmodrinth",
+  "threads": 4,
   "modrinth":
   {
     "minecraft_versions":

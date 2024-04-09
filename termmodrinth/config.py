@@ -8,6 +8,8 @@ class Config(Singleton):
     with open('termmodrinth.json', 'r') as f:
       self.conf_data = json.load(f)
 
+  def threads(self): return self.conf_data["threads"]
+
   def filterListComment(self, data): return list(filter(lambda x: not x.startswith("#"), data))
 
   def projects(self, project_type): return self.filterListComment(self.conf_data[project_type+'s'])
