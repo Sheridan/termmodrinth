@@ -4,11 +4,13 @@ import os
 from termmodrinth.singleton import Singleton
 
 class Config(Singleton):
-  def __init__(self):
+  def _new(self):
     with open('termmodrinth.json', 'r') as f:
       self.conf_data = json.load(f)
+    self._qps = int(self.conf_data["modrinth"]["max_queries_per_minute"] / 60)
 
   def threads(self): return self.conf_data["threads"]
+  def qps(self): return self._qps
 
   def filterListComment(self, data): return list(filter(lambda x: not x.startswith("#"), data))
 

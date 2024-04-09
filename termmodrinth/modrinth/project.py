@@ -40,7 +40,7 @@ class ModrinthProject(object):
     return "source" in filename or "src" in filename
 
   def writeCalculatedInfoPart(self, file_handler, caption, text):
-    Logger().log('inf', self.project_type, self.slug, "{}: {}".format(caption, text), "yellow")
+    Logger().projectLog('inf', self.project_type, self.slug, "{}: {}".format(caption, text), "yellow")
     file_handler.write("{}: {}\n".format(caption, text))
 
   def writeInfoPart(self, file_handler, data, key):
@@ -75,14 +75,14 @@ class ModrinthProject(object):
         for remote_file in self.version_data["files"]:
           if self.fileMustBeDownloaded(remote_file["primary"], remote_file["filename"]):
             if not os.path.isfile(self.storage_filepath(remote_file["filename"])):
-              Logger().log('inf', self.project_type, self.slug, "Downloading {}".format(remote_file["url"]), 'green')
+              Logger().projectLog('inf', self.project_type, self.slug, "Downloading {}".format(remote_file["url"]), 'green')
               filelist_handler.write("{}\n".format(self.storage_filename(remote_file["filename"])))
               urllib.request.urlretrieve(remote_file["url"], self.storage_filepath(remote_file["filename"]))
             else:
-              Logger().log('inf', self.project_type, self.slug, "{} alredy downloaded".format(remote_file["filename"]), 'cyan')
+              Logger().projectLog('inf', self.project_type, self.slug, "{} alredy downloaded".format(remote_file["filename"]), 'cyan')
         filelist_handler.close()
       else:
-        Logger().log('inf', self.project_type, self.slug, "All files alredy downloaded", 'cyan')
+        Logger().projectLog('inf', self.project_type, self.slug, "All files alredy downloaded", 'cyan')
 
   def link(self):
     from termmodrinth.cleaner import Cleaner
@@ -93,19 +93,19 @@ class ModrinthProject(object):
         active_filepath = self.active_filepath(remote_file["primary"], index, extention)
         Cleaner().appenFile(self.project_type, self.active_filename(remote_file["primary"], index, extention))
         if not os.path.isfile(active_filepath):
-          Logger().log('inf', self.project_type, self.slug, "Linking {}".format(self.active_filename(remote_file["primary"], index, extention)), 'green')
+          Logger().projectLog('inf', self.project_type, self.slug, "Linking {}".format(self.active_filename(remote_file["primary"], index, extention)), 'green')
           os.link(storage_filepath, active_filepath)
         else:
-          Logger().log('inf', self.project_type, self.slug, "{} alredy linked".format(self.active_filename(remote_file["primary"], index, extention)), 'cyan')
+          Logger().projectLog('inf', self.project_type, self.slug, "{} alredy linked".format(self.active_filename(remote_file["primary"], index, extention)), 'cyan')
 
   def updateDependencies(self):
     from termmodrinth.worker import Worker
     for dependency in self.version_data["dependencies"]:
       if dependency["project_id"]:
         slug, project_type = ModrinthAPI().loadSlug(dependency["project_id"])
-        Logger().log('inf', self.project_type, self.slug, "Dependency {}: {}:{}".format(dependency["dependency_type"], project_type, slug), "blue")
+        Logger().projectLog('inf', self.project_type, self.slug, "Dependency {}: {}:{}".format(dependency["dependency_type"], project_type, slug), "blue")
         if dependency["dependency_type"] in Config().requestDependencies():
-          Logger().log('inf', self.project_type, self.slug, "Request dependency: {}:{}".format(project_type, slug), "green")
+          Logger().projectLog('inf', self.project_type, self.slug, "Request dependency: {}:{}".format(project_type, slug), "green")
           Worker().updateProject(project_type, slug)
 
   def update(self):

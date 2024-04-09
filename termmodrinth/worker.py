@@ -7,15 +7,15 @@ from termmodrinth.logger import Logger
 from termmodrinth.modrinth import project_types
 
 class Worker(Singleton):
-  def __init__(self):
+  def _new(self):
     self.tp_executor = ThreadPoolExecutor(max_workers=Config().threads())
 
   def updateProject(self, project_type, slug):
     if Cleaner().appenSlug(project_type, slug):
-      Logger().log('inf', project_type, slug, 'Starting update')
+      Logger().projectLog('inf', project_type, slug, 'Starting update')
       project_types[project_type]['class'](slug).update()
     else:
-      Logger().log('inf', project_type, slug, "Already updated", "light_blue")
+      Logger().projectLog('inf', project_type, slug, "Already updated", "light_blue")
 
   def update(self):
     for project_type in project_types.keys():

@@ -37,16 +37,14 @@ class Cleaner(Singleton):
 
   def cleanup(self):
     for project_type in project_types.keys():
-      Logger().delimiter("|", "Cleaning up {}s".format(project_type))
       path = Config().active_path(project_type)
       for f in os.listdir(path):
         if f.endswith(project_types[project_type]['extention']):
           if f not in self.files[project_type]:
             filename = "{}/{}".format(path, f)
-            Logger().msg("Removing {}".format(filename), "red")
+            Logger().log("inf", "Removing {} in {}s".format(filename, project_type), "red")
             os.remove(filename)
 
   def printStats(self):
-    Logger().delimiter("=", "Stats")
     for project_type in project_types.keys():
-      Logger().msg("{}s. Requested: {}; Processed: {}; Files: {}".format(project_type.capitalize(), len(Config().projects(project_type)), len(self.projects[project_type]), len(self.files[project_type])), "light_green")
+      Logger().log("inf", "{}s. Requested: {}; Processed: {}; Files: {}".format(project_type.capitalize(), len(Config().projects(project_type)), len(self.projects[project_type]), len(self.files[project_type])), "light_green")

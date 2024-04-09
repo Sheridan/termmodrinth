@@ -9,15 +9,19 @@ class Logger(Singleton):
       'err': 'red'
     }
 
-  def delimiter(self, delimiter, text):
-    dlm = colored(delimiter * 64, "blue")
-    print("{} {} {}".format(dlm, colored(text, "magenta"), dlm))
+  def _timestamp(self):
+    return colored(datetime.datetime.now().strftime("%H:%M:%S"), 'blue')
 
-  def msg(self, text, color):
-    print(colored(text, color))
+  def _level(self, level):
+    return colored(level, self.levels[level])
 
-  def log(self, level, project_type, slug, msg, msg_color = 'white'):
-    print("[{}] [{}] {}: {}".format(colored(datetime.datetime.now().strftime("%H:%M:%S"), 'blue'),
-                                    colored(level, self.levels[level]),
+  def log(self, level, msg, color):
+    print("[{}] [{}] {}".format(self._timestamp(),
+                                self._level(level),
+                                colored(msg, color)))
+
+  def projectLog(self, level, project_type, slug, msg, msg_color = 'white'):
+    print("[{}] [{}] {}: {}".format(self._timestamp(),
+                                    self._level(level),
                                     colored('{}:{}'.format(project_type, slug), "magenta"),
                                     colored(msg, msg_color)))
