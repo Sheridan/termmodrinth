@@ -4,7 +4,7 @@ import urllib.parse
 
 from termmodrinth.singleton import Singleton
 from termmodrinth.config import Config
-
+from termmodrinth.logger import Logger
 
 class ModrinthAPI(Singleton):
   def __init__(self):
@@ -20,9 +20,13 @@ class ModrinthAPI(Singleton):
   def callAPI(self, query):
     url = self.apiURL + query
     # print(url)
-    with urllib.request.urlopen(url) as response:
-      jdata = json.load(response)
-      return jdata
+    try:
+      with urllib.request.urlopen(url) as response:
+        jdata = json.load(response)
+        return jdata
+    except Exception as e:
+      Logger().log('err', "", "", "Failure call api: {}".format(e), "white")
+    # raise Exception("Can not request api")
 
   def loadProject(self, project_id):
     pdata = self.callAPI("project/{}".format(project_id))
@@ -40,4 +44,5 @@ class ModrinthAPI(Singleton):
       if len(pdata):
         # self.dump_json(pdata[0])
         return pdata[0]
-    raise Exception("Can not request api")
+    Logger().log('err', project_type, slug, "No project version available", "white")
+    raise Exception("No project version available")
