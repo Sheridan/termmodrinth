@@ -3,6 +3,7 @@ import urllib.request
 import urllib.parse
 import time
 import os
+# from packaging.version import Version
 
 from termmodrinth.singleton import Singleton
 from termmodrinth.config import Config
@@ -59,6 +60,15 @@ class ModrinthAPI(Singleton):
     pdata = self.loadProject(project_id)
     return (pdata["slug"], pdata["project_type"])
 
+
+  def mineLastVersion(self, data):
+    data_item = data[0]
+    # for data_index in data:
+    #   print("curr: {}".format(data_index["version_number"]))
+    #   if Version(self.splitVersion(data_index["version_number"])) > Version(self.splitVersion(data_item["version_number"])):
+    #     data_item = data_index
+    return data_item
+
   def loadProjectVersion(self, slug, project_type):
     key = "{}:{}".format(slug, project_type)
     if key not in self.cache.keys():
@@ -68,8 +78,8 @@ class ModrinthAPI(Singleton):
         # if len(pdata) > 1:
         #   self.dump_json(pdata)
         if len(pdata):
-          # self.dump_json(pdata[0])
-          self.cache[key] = pdata[0]
+          self.cache[key] = self.mineLastVersion(pdata)
+          Logger().projectLog('inf', slug, project_type, "Selected version: {}".format(self.cache[key]["version_number"]), "yellow")
           break
         else:
           Logger().projectLog('wrn', project_type, slug, "Unavialable for minecraft version {}".format(mc_version), "light_grey")
