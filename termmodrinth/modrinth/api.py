@@ -9,6 +9,7 @@ from termmodrinth.logger import Logger
 class ModrinthAPI(Singleton):
   def __init__(self):
     self.apiURL = "https://api.modrinth.com/v2/"
+    self.cache = {}
     # self.apiURL = "https://staging-api.modrinth.com/v2/"
 
   def dump_json(self, data):
@@ -29,20 +30,26 @@ class ModrinthAPI(Singleton):
     # raise Exception("Can not request api")
 
   def loadProject(self, project_id):
-    pdata = self.callAPI("project/{}".format(project_id))
+    if project_id not in self.cache.keys():
+      self.cache[project_id] = self.callAPI("project/{}".format(project_id))
     # self.dump_json(pdata)
-    return pdata
+    return self.cache[project_id]
 
   def loadSlug(self, project_id):
     pdata = self.loadProject(project_id)
     return (pdata["slug"], pdata["project_type"])
 
   def loadProjectVersion(self, slug, project_type):
-    for mc_version in Config().modrinthMCVersions():
-      api_path = 'project/{}/version?game_versions=[{}]&loaders=[{}]'.format(slug, self.quote(mc_version), self.quote(Config().modrinthLoader(project_type)))
-      pdata = self.callAPI(api_path)
-      if len(pdata):
-        # self.dump_json(pdata[0])
-        return pdata[0]
-    Logger().log('err', project_type, slug, "No project version available", "white")
-    raise Exception("No project version available")
+    key = "{}:{}".format(slug, project_type)
+    if key not in self.cache.keys():
+      for mc_version in Config().modrinthMCVersions():
+        api_path = 'project/{}/version?game_versions=[{}]&loaders=[{}]'.format(slug, self.quote(mc_version), self.quote(Config().modrinthLoader(project_type)))
+        pdata = self.callAPI(api_path)
+        if len(pdata):
+          # self.dump_json(pdata[0])
+          self.cache[key] = pdata[0]
+          break
+    if key not in self.cache.keys():
+      Logger().log('err', project_type, slug, "No project version available", "white")
+      raise Exception("No project version available")
+    return self.cache[key]
