@@ -24,17 +24,18 @@ class ModrinthAPI(Singleton):
       jdata = json.load(response)
       return jdata
 
-  def loadSlug(self, project_id):
+  def loadProject(self, project_id):
     pdata = self.callAPI("project/{}".format(project_id))
     # self.dump_json(pdata)
+    return pdata
+
+  def loadSlug(self, project_id):
+    pdata = self.loadProject(project_id)
     return (pdata["slug"], pdata["project_type"])
 
   def loadProjectVersion(self, slug, project_type):
-    loader = ""
-    if project_type == "mod":
-      loader = "&loaders=[{}]".format(self.quote(Config().modrinthLoader()))
     for mc_version in Config().modrinthMCVersions():
-      api_path = 'project/{}/version?game_versions=[{}]{}'.format(slug, self.quote(mc_version), loader)
+      api_path = 'project/{}/version?game_versions=[{}]&loaders=[{}]'.format(slug, self.quote(mc_version), self.quote(Config().modrinthLoader(project_type)))
       pdata = self.callAPI(api_path)
       if len(pdata):
         # self.dump_json(pdata[0])

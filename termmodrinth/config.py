@@ -12,7 +12,7 @@ class Config(Singleton):
 
   def projects(self, project_type): return self.filterListComment(self.conf_data[project_type+'s'])
 
-  def modrinthLoader(self): return self.conf_data["modrinth"]["loader"]
+  def modrinthLoader(self, project_type): return self.conf_data["modrinth"]["loader"][project_type+'s']
   def modrinthMCVersions(self): return self.conf_data["modrinth"]["minecraft_versions"]
 
   def modrinthLogin(self): return self.conf_data["modrinth"]["user"]["login"]
