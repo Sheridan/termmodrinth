@@ -2,6 +2,7 @@ import json
 import urllib.request
 import urllib.parse
 import time
+import os
 
 from termmodrinth.singleton import Singleton
 from termmodrinth.config import Config
@@ -27,9 +28,10 @@ class ModrinthAPI(Singleton):
   def checkQPS(self):
     delta = time.time() - self.time
     if self.requests >= Config().qps() and delta < 1:
-      Logger().log("inf", "QPS sleep {}s".format(round(delta, 2)), "blue")
+      sleepTime = delta * 2
+      Logger().log("inf", "QPS sleep {}s".format(round(sleepTime, 2)), "blue")
+      time.sleep(sleepTime)
       self.resetQPS()
-      time.sleep(delta)
 
   def callAPI(self, query):
     url = self.apiURL + query
@@ -41,7 +43,8 @@ class ModrinthAPI(Singleton):
         jdata = json.load(response)
         return jdata
     except Exception as e:
-      Logger().projectLog('err', "", "", "Failure call api: {}".format(e), "white")
+      Logger().log('err', "Failure call api ({}): {}".format(url, e), "red")
+      os._exit(1)
     # raise Exception("Can not request api")
 
   def loadProject(self, project_id):
@@ -57,7 +60,7 @@ class ModrinthAPI(Singleton):
   def loadProjectVersion(self, slug, project_type):
     key = "{}:{}".format(slug, project_type)
     if key not in self.cache.keys():
-      for mc_version in Config().modrinthMCVersions():
+      for mc_version in Config().modrinthMCVersions(project_type):
         api_path = 'project/{}/version?game_versions=[{}]&loaders=[{}]'.format(slug, self.quote(mc_version), self.quote(Config().modrinthLoader(project_type)))
         pdata = self.callAPI(api_path)
         if len(pdata):
@@ -67,6 +70,6 @@ class ModrinthAPI(Singleton):
         else:
           Logger().projectLog('wrn', project_type, slug, "Unavialable for minecraft version {}".format(mc_version), "light_grey")
     if key not in self.cache.keys():
-      Logger().projectLog('err', project_type, slug, "No project version available", "white")
-      raise Exception("No project version available")
+      Logger().projectLog('err', project_type, slug, "None version available", "red")
+      os._exit(1)
     return self.cache[key]
