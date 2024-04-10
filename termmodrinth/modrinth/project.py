@@ -1,13 +1,11 @@
 import urllib.request
-import datetime
-import hashlib
 import os
 
 from termmodrinth.config import Config
 from termmodrinth.logger import Logger
 from termmodrinth.modrinth.api import ModrinthAPI
 
-from termmodrinth.utils import sizeof_fmt, convert_isoformat_date
+from termmodrinth.utils import sizeof_fmt, convert_isoformat_date, get_file_sha512
 
 class ModrinthProject(object):
   def __init__(self, slug, project_type):
@@ -87,8 +85,7 @@ class ModrinthProject(object):
 
   def fileDigest(self, filepath):
     if os.path.isfile(filepath):
-      with open(filepath, "rb") as f:
-        return hashlib.file_digest(f, "sha512").hexdigest()
+      return get_file_sha512(filepath)
     return ""
 
   def checkDigest(self, filepath, digest):

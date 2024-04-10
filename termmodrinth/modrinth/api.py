@@ -3,7 +3,6 @@ import urllib.request
 import urllib.parse
 import time
 import os
-import datetime
 # from packaging.version import Version
 
 from termmodrinth.singleton import Singleton
