@@ -18,7 +18,10 @@ class Worker(Singleton):
 
   def updateProject(self, project_type, slug):
     if Cleaner().appenSlug(project_type, slug):
-      project_types[project_type]['class'](slug).update()
+      try:
+        project_types[project_type]['class'](slug).update()
+      except Exception as e:
+        Logger().projectLog('err', project_type, slug, "Update failure : {}".format(e), "red")
     else:
       Logger().projectLog('inf', project_type, slug, "Already updated", "light_blue")
 
