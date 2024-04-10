@@ -10,6 +10,8 @@ from termmodrinth.singleton import Singleton
 from termmodrinth.config import Config
 from termmodrinth.logger import Logger
 
+from termmodrinth.utils import convert_isoformat_date
+
 class ModrinthAPI(Singleton):
   def _new(self):
     # self.apiURL = "https://staging-api.modrinth.com/v2/"
@@ -65,7 +67,7 @@ class ModrinthAPI(Singleton):
     data_item = data[0]
     for data_index in data:
       # print("curr: {}".format(data_index["version_number"]))
-      if datetime.datetime.fromisoformat(data_index["date_published"]) > datetime.datetime.fromisoformat(data_item["date_published"]):
+      if convert_isoformat_date(data_index["date_published"]) > convert_isoformat_date(data_item["date_published"]):
         data_item = data_index
     return data_item
 

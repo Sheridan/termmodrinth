@@ -7,7 +7,7 @@ from termmodrinth.config import Config
 from termmodrinth.logger import Logger
 from termmodrinth.modrinth.api import ModrinthAPI
 
-from termmodrinth.utils import sizeof_fmt
+from termmodrinth.utils import sizeof_fmt, convert_isoformat_date
 
 class ModrinthProject(object):
   def __init__(self, slug, project_type):
@@ -68,8 +68,8 @@ class ModrinthProject(object):
       self.writeInfoPart(file_handler, self.version_data(), "name")
       self.writeInfoPart(file_handler, self.version_data(), "version_number")
       self.writeInfoPart(file_handler, self.version_data(), "version_type")
-      self.writeCalculatedInfoPart(file_handler, "Published date", datetime.datetime.fromisoformat(self.project_data()["published"]).strftime("%Y.%m.%d %H:%M:%S"))
-      self.writeCalculatedInfoPart(file_handler, "Updated date", datetime.datetime.fromisoformat(self.project_data()["updated"]).strftime("%Y.%m.%d %H:%M:%S"))
+      self.writeCalculatedInfoPart(file_handler, "Published date", convert_isoformat_date(self.project_data()["published"]).strftime("%Y.%m.%d %H:%M:%S"))
+      self.writeCalculatedInfoPart(file_handler, "Updated date", convert_isoformat_date(self.project_data()["updated"]).strftime("%Y.%m.%d %H:%M:%S"))
       self.writeCalculatedInfoPart(file_handler, "Supported minecraft versions", ", ".join(self.version_data()["game_versions"]))
       self.writeCalculatedInfoPart(file_handler, "Supported loaders", ", ".join(self.version_data()["loaders"]))
       self.writeCalculatedInfoPart(file_handler, "Side", "; ".join(["Server: {}".format(self.project_data()["server_side"]), "Client: {}".format(self.project_data()["client_side"])]))
