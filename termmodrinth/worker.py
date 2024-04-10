@@ -22,6 +22,7 @@ class Worker(Singleton):
         project_types[project_type]['class'](slug).update()
       except Exception as e:
         Logger().projectLog('err', project_type, slug, "Update failure : {}".format(e), "red")
+        os._exit(1)
     else:
       Logger().projectLog('inf', project_type, slug, "Already updated", "light_blue")
 
