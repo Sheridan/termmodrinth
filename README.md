@@ -1,10 +1,7 @@
 # termmodrinth
-A terminal utility that works with the modrinth api and downloads projects from there
+A terminal utility that works with the modrinth api and downloads projects from there.
 
-
-
-Directories for storing project files will be created in the directory specified in the `storage` option. The `storage` directories store project files and their change history. The `active` directories contain projects ready to be connected. It is enough to create a symbolic link of the `active` directories to the appropriate locations. For example, like this: `ln -s ~/modrinth/resourcepacks/active ~/.minecraft/resourcepacks`
-
+The main purpose of the script is to download the specified projects from modrinth.com, determines the dependencies of these projects and downloads them too.
 
 # configuration
 All settings are in `termmodrinth.json`. Example configuration in `termmodrinth.json.example`
