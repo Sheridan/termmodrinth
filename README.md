@@ -7,9 +7,7 @@ Directories for storing project files will be created in the directory specified
 
 
 # configuration
-All settings are in `termmodrinth.json`. The corresponding slugs should be added to the mods, resourcepacks, shaders lists. Slug can be found in the address bar. For example, in the address `https://modrinth.com/mod/fabric-api` the slug is `fabric-api`.
-
-Example configuration in `termmodrinth.json.example`
+All settings are in `termmodrinth.json`. Example configuration in `termmodrinth.json.example`
 
 Add the `#` symbol at the beginning of the lists item to ignore it
 
