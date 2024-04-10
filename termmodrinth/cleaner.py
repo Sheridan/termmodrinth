@@ -49,4 +49,4 @@ class Cleaner(Singleton):
   def printStats(self):
     for project_type in project_types.keys():
       Logger().log("inf", "{}s. Requested: {}; Processed: {}; Files: {}".format(project_type.capitalize(), len(Config().projects(project_type)), len(self.projects[project_type]), len(self.files[project_type])), "light_green")
-    Logger().log("inf", "Total API queryes: {0[0]}; Spent time: {0[1]}; Average QPS: {0[2]}".format(ModrinthAPI().stats()), "light_green")
+    Logger().log("inf", "Total API queries: {0[0]}; Spent time: {0[1]}; Average QPS: {0[2]}".format(ModrinthAPI().stats()), "light_green")

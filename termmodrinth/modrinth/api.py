@@ -64,7 +64,7 @@ class ModrinthAPI(Singleton):
   def mineLastVersion(self, data):
     data_item = data[0]
     for data_index in data:
-      print("curr: {}".format(data_index["version_number"]))
+      # print("curr: {}".format(data_index["version_number"]))
       if datetime.datetime.fromisoformat(data_index["date_published"]) > datetime.datetime.fromisoformat(data_item["date_published"]):
         data_item = data_index
     return data_item
@@ -80,6 +80,7 @@ class ModrinthAPI(Singleton):
         if len(pdata):
           self.cache[key] = self.mineLastVersion(pdata)
           Logger().projectLog('inf', slug, project_type, "Selected version: {}".format(self.cache[key]["version_number"]), "yellow")
+          # self.dump_json(self.cache[key])
           break
         else:
           Logger().projectLog('wrn', project_type, slug, "Unavialable for minecraft version {}".format(mc_version), "light_grey")
