@@ -3,6 +3,7 @@ import urllib.request
 import urllib.parse
 import time
 import os
+import datetime
 # from packaging.version import Version
 
 from termmodrinth.singleton import Singleton
@@ -60,13 +61,12 @@ class ModrinthAPI(Singleton):
     pdata = self.loadProject(project_id)
     return (pdata["slug"], pdata["project_type"])
 
-
   def mineLastVersion(self, data):
     data_item = data[0]
-    # for data_index in data:
-    #   print("curr: {}".format(data_index["version_number"]))
-    #   if Version(self.splitVersion(data_index["version_number"])) > Version(self.splitVersion(data_item["version_number"])):
-    #     data_item = data_index
+    for data_index in data:
+      print("curr: {}".format(data_index["version_number"]))
+      if datetime.datetime.fromisoformat(data_index["date_published"]) > datetime.datetime.fromisoformat(data_item["date_published"]):
+        data_item = data_index
     return data_item
 
   def loadProjectVersion(self, slug, project_type):
@@ -76,7 +76,7 @@ class ModrinthAPI(Singleton):
         api_path = 'project/{}/version?game_versions=[{}]&loaders=[{}]'.format(slug, self.quote(mc_version), self.quote(Config().modrinthLoader(project_type)))
         pdata = self.callAPI(api_path)
         # if len(pdata) > 1:
-        #   self.dump_json(pdata)
+        # self.dump_json(pdata)
         if len(pdata):
           self.cache[key] = self.mineLastVersion(pdata)
           Logger().projectLog('inf', slug, project_type, "Selected version: {}".format(self.cache[key]["version_number"]), "yellow")
