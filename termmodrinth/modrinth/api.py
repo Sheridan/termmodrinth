@@ -8,6 +8,7 @@ import os
 from termmodrinth.singleton import Singleton
 from termmodrinth.config import Config
 from termmodrinth.logger import Logger
+from termmodrinth import version
 
 from termmodrinth.utils import convert_isoformat_date
 
@@ -19,6 +20,10 @@ class ModrinthAPI(Singleton):
     self.resetQPS()
     self.totlal_requests = 0
     self.init_time = time.time()
+    self.request_headers = {
+      'User-Agent': 'User-Agent: Sheridan/termmodrinth/{} (sheridan@babylon-five.ru)'.format(version)
+    }
+    print(self.request_headers)
 
   def dump_json(self, data):
     print(json.dumps(data, indent=2))
@@ -38,12 +43,15 @@ class ModrinthAPI(Singleton):
       time.sleep(sleepTime)
       self.resetQPS()
 
+  def createRequest(self, url):
+    return urllib.request.Request(url, data=None, headers=self.request_headers)
+
   def callAPI(self, query):
     url = self.apiURL + query
     # print(url)
     try:
       self.checkQPS()
-      with urllib.request.urlopen(url) as response:
+      with urllib.request.urlopen(self.createRequest(url)) as response:
         self.requests += 1
         self.totlal_requests += 1
         jdata = json.load(response)
