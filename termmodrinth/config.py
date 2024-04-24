@@ -23,6 +23,9 @@ class Config(Singleton):
   def modrinthLogin(self): return self.conf_data["modrinth"]["user"]["login"]
   def modrinthPassword(self): return self.conf_data["modrinth"]["user"]["password"]
 
+  def cacheLiveSecunds(self): return self.conf_data["cache_lifetime_minutes"]*60
+  def tmpPath(self): return self.conf_data["tmp_path"]
+
   def storage_path(self, project_type): return self.storage(project_type, "storage")
   def active_path(self, project_type): return self.storage(project_type, "active")
   def storage(self, project_type, storage_type):

@@ -3,6 +3,8 @@ import urllib.request
 import urllib.parse
 import time
 import os
+import hashlib
+import pathlib
 # from packaging.version import Version
 
 from termmodrinth.singleton import Singleton
@@ -23,7 +25,9 @@ class ModrinthAPI(Singleton):
     self.request_headers = {
       'User-Agent': 'User-Agent: Sheridan/termmodrinth/{} (sheridan@babylon-five.ru)'.format(version)
     }
-    print(self.request_headers)
+    self.tmp_path = "{}/queries".format(Config().tmpPath())
+    os.makedirs(self.tmp_path, exist_ok=True)
+    # print(self.request_headers)
 
   def dump_json(self, data):
     print(json.dumps(data, indent=2))
@@ -46,17 +50,62 @@ class ModrinthAPI(Singleton):
   def createRequest(self, url):
     return urllib.request.Request(url, data=None, headers=self.request_headers)
 
+  def cacheFilename(self, url):
+    return "{}/{}.json".format(self.tmp_path, hashlib.md5(url.encode()).hexdigest())
+
+  def storeQueryResult(self, url, data):
+    store_data = {
+      "termmodrinth":
+      {
+        "query_url": url
+      },
+      "modrinth":
+      {
+        "api_query":
+        {
+          "result":
+          {
+            "data": data
+          }
+        }
+      }
+    }
+    with open(self.cacheFilename(url), 'w') as f:
+      json.dump(store_data, f, indent=2)
+
+  def hasQueryResult(self, url):
+    filename = self.cacheFilename(url)
+    if os.path.isfile(filename):
+      # print(int(time.time() - pathlib.Path(filename).stat().st_mtime), Config().cacheLiveSecunds())
+      return (int(time.time() - pathlib.Path(filename).stat().st_mtime) < Config().cacheLiveSecunds())
+    return False
+
+  def loadQueryResult(self, url):
+    with open(self.cacheFilename(url), 'r') as f:
+      return json.load(f)
+
+  def removeQueryResult(self, url):
+    try:
+        os.remove(self.cacheFilename(url))
+    except OSError:
+        pass
+
   def callAPI(self, query):
     url = self.apiURL + query
     # print(url)
+    if self.hasQueryResult(url):
+      Logger().log("inf", "Query {} loaded from cache file {}".format(url, self.cacheFilename(url)), "blue")
+      return self.loadQueryResult(url)["modrinth"]["api_query"]["result"]["data"]
     try:
       self.checkQPS()
       with urllib.request.urlopen(self.createRequest(url)) as response:
         self.requests += 1
         self.totlal_requests += 1
         jdata = json.load(response)
+        self.storeQueryResult(url, jdata)
         return jdata
     except Exception as e:
+      self.removeQueryResult(url)
       Logger().log('err', "Failure call api ({}): {}".format(url, e), "red")
       os._exit(1)
 

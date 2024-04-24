@@ -35,7 +35,9 @@
     "shrimple",
     "soft-voxels-lite"
   ],
-  "storage": "/tmp/termmodrinth",
+  "storage": "/var/lib/termmodrinth",
+  "cache_lifetime_minutes": 4,
+  "tmp_path": "/tmp/termmodrinth",
   "threads": 4,
   "modrinth":
   {
